@@ -12,6 +12,5 @@
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
     <label>Sample</label>
     <navType>Standard</navType>
-    <tabs>Samples</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>

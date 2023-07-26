@@ -100,4 +100,3 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
 
   handleChangeRadioRecordType(evt) {}
 }
-
