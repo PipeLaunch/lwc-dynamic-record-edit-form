@@ -1,0 +1,15 @@
+<template>
+    <section class="slds-var-p-horizontal_medium slds-grid slds-grid_vertical">
+        <div class="slds-is-relative" style="margin: auto">
+            <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+
+        <p class="slds-text-align_center slds-var-p-top_large slds-text-color_weak slds-text-body_small">
+            {status.loadingMessage}
+        </p>
+    </section>
+</template>

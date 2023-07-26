@@ -1,0 +1,8 @@
+<template>
+    <fieldset class="slds-form-element">
+        <label class="slds-assistive-text">{labels.SELECT_A_RECORD_TYPE}</label>
+        <lightning-radio-group name="recordType" label={labels.SELECT_A_RECORD_TYPE} options={_recordTypes}
+            value={value} type="radio" onchange={handleChangeRadioRecordType} required>
+        </lightning-radio-group>
+    </fieldset>
+</template>
