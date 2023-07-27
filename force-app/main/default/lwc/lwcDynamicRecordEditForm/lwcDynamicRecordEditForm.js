@@ -75,6 +75,11 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   @api fieldsToIgnore = [];
 
   /**
+   * @property {boolean} accordion - Show collapsible accordion
+   */
+  @api accordion = false;
+
+  /**
    * @property {object} labels - An object with the labels for the component.
    */
   @api get labels() {

@@ -11,14 +11,38 @@
 
         <slot onslotvaluechange={handleSlotValueChange}></slot>
 
+        <!-- accordion mode  -->
+        <lightning-accordion lwc:if={accordion} class="slds-var-m-top_small" allow-multiple-sections-open>
+            <template for:each={layoutSections} for:item="section">
+                <lightning-accordion-section if:true={section.id} key={section.id} name={section.id}
+                    label={section.heading}>
+                    <template for:each={section.layoutRows} for:item="layoutRow">
+                        <template for:each={layoutRow.layoutItems} for:item="layoutItem">
+                            <!-- compound fields heading label  -->
+                            <div lwc:if={layoutItem._elementLabel} key={layoutItem._id}
+                                class="slds-form-element__label slds-form-element__legend slds-lookup">
+                                {layoutItem._elementLabel}
+                            </div>
 
+                            <template for:each={layoutItem.layoutComponents} for:item="layoutComponent">
+                                <lightning-input-field lwc:if={layoutComponent.apiName} key={layoutComponent.apiName}
+                                    field-name={layoutComponent.apiName} required={layoutComponent._required}
+                                    disabled={layoutItem._disabled} class={layoutComponent._computedClasses}>
+                                </lightning-input-field>
+                            </template>
+                        </template>
+                    </template>
+                </lightning-accordion-section>
+            </template>
+        </lightning-accordion>
 
-        <template for:each={layoutSections} for:item="section">
-            <template lwc:if={section.id}>
+        <!-- normal heading section -->
+        <template lwc:else>
+            <template for:each={layoutSections} for:item="section">
                 <h3 key={section.id}
                     class="slds-section__title slds-theme_shade slds-var-m-top_medium slds-var-m-bottom_x-small"
                     name={section.id}>
-                    <span class="section-header-title slds-var-p-horizontal_small">
+                    <span title={section.heading} class="section-header-title slds-var-p-horizontal_small">
                         {section.heading}
                     </span>
                 </h3>
@@ -40,24 +64,18 @@
                     </template>
                 </template>
             </template>
-
-
-
-
-
-            <!-- </lightning-accordion-section> -->
         </template>
-        <!-- </lightning-accordion> -->
 
 
 
-        <!-- <footer class="slds-modal__footer slds-text-align_center">
+
+        <footer class="slds-modal__footer slds-text-align_center">
             <lightning-button variant="neutral" class="slds-var-m-top_small slds-var-m-right_x-small"
                 label={labels.CANCEL} onclick={handleClickCancelButton}>
             </lightning-button>
             <lightning-button variant="brand" class="slds-var-m-top_small" type="submit" label={labels.SAVE}
                 onclick={handleClickSaveButton}>
             </lightning-button>
-        </footer> -->
+        </footer>
     </lightning-record-edit-form>
 </template>
