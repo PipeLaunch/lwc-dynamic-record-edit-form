@@ -11,6 +11,10 @@ export default class Samples extends LightningElement {
   values = {
     Email__c: {
       value: "sample@gmail.com",
+      required: true,
+    },
+    Name: {
+      hidden: true,
     },
   };
 }
