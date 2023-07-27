@@ -9,6 +9,7 @@ export function processLayoutSections({
   fieldsProperties,
   fieldsToIgnore = [],
   values = null,
+  debug = false,
 }) {
   if (
     !Array.isArray(recordInfo?.layout?.sections) ||
@@ -62,7 +63,12 @@ export function processLayoutSections({
     }
   }
 
-  console.info("sections sorted", filteredSections);
+  if (debug) {
+    console.info(
+      "[LwcDynamicRecordEditForm] Processed Sections",
+      filteredSections
+    );
+  }
 
   return filteredSections;
 }

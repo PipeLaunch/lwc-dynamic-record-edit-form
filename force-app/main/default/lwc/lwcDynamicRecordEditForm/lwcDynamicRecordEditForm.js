@@ -62,6 +62,9 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
    */
   @api propagateEvents = false;
 
+  /**
+   * @property {boolean} disableRecordTypeSupport - Disable the record type selection
+   */
   @api disableRecordTypeSupport = false;
 
   /**
@@ -107,6 +110,7 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   @track status = {
     recordFormLoading: true,
     loading: false,
+    overlayLoading: false, // show an overlay loading when submitting the form to prevent any interaction
     loadingMessage: DEFAULT_LABELS.LOADING_OBJECT_INFO,
     showRecordTypeSelection: false,
   };
@@ -122,7 +126,12 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   async getObjectInfoResponse(response) {
     try {
       if (response.data) {
-        console.info("response.data", response.data);
+        if (this.debug) {
+          console.info(
+            "[LwcDynamicRecordEditForm] Wire getObjectInfo response",
+            response.data
+          );
+        }
         this._processGetObjectInfoResponse(response.data);
         this.status.loading = false;
       } else if (response.error) {
@@ -135,7 +144,6 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   }
 
   connectedCallback() {
-    this.disableRecordTypeSupport = true;
     this._init();
   }
 
@@ -153,8 +161,10 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
     return template_recordEditForm;
   }
 
-  @api
-  reset() {
+  /**
+   * @description reset the form fields
+   */
+  @api reset() {
     const inputFields = this.template.querySelectorAll("lightning-input-field");
     if (inputFields) {
       inputFields.forEach((field) => {
@@ -163,8 +173,12 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
     }
   }
 
-  @api
-  submit() {}
+  /**
+   * @description submit the form
+   */
+  @api submit() {
+    this.template.querySelector("lightning-record-edit-form")?.submit();
+  }
 
   /**
    * @description next is used when selecting a record type
@@ -180,57 +194,81 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
     return computeRadioRecordTypesOptions(this._recordTypes);
   }
 
-  get computeRadioRecordTypeValue() {}
-
-  get computeShowRecordEditFormLoading() {
-    return this.status.recordFormLoading;
-  }
-
   handleError(evt) {
+    this.status.overlayLoading = false;
     this.status.recordFormLoading = false;
-    console.error("handle form error", evt.detail);
+
+    console.error(
+      "[LwcDynamicRecordEditForm] Record form error payload",
+      evt.detail
+    );
+
+    this._dispatchEvent("error", evt.detail);
   }
 
+  /**
+   * @description handle the onload event of the record form
+   * @param {*} evt
+   * @returns void
+   */
   handleLoad(evt) {
     if (!this.status.recordFormLoading) {
       return; // only run once
     }
-    console.info("handle load", evt.detail);
+    if (this.debug) {
+      console.info(
+        "[LwcDynamicRecordEditForm] Record form onload payload",
+        evt.detail
+      );
+    }
+
     this.layoutSections = processLayoutSections({
       recordInfo: evt.detail,
       fieldsProperties: this._fieldsProperties,
       fieldsToIgnore: this.fieldsToIgnore,
       values: this.values,
+      debug: this.debug,
     });
+
     this.status.recordFormLoading = false;
   }
 
   handleSuccess(evt) {
-    console.info("handle form success", evt.detail);
-    this.dispatchEvent(
-      new CustomEvent("success", {
-        detail: evt.detail,
-        composed: this.propagateEvents,
-        bubbles: this.propagateEvents,
-      })
-    );
+    this.status.overlayLoading = false;
+
+    if (this.debug) {
+      console.info(
+        "[LwcDynamicRecordEditForm] Record form onsuccess payload",
+        evt.detail
+      );
+    }
+    this._dispatchEvent("success", evt.detail);
+  }
+
+  handleSubmit(evt) {
+    this.status.overlayLoading = true;
+
+    if (this.debug) {
+      console.info(
+        "[LwcDynamicRecordEditForm] Record form onsubmit payload",
+        evt.detail
+      );
+    }
+    this._dispatchEvent("submit", evt.detail);
   }
 
   handleClickCancelButton() {
-    this.dispatchEvent(
-      new CustomEvent("close", {
-        composed: this.propagateEvents,
-        bubbles: this.propagateEvents,
-      })
-    );
+    this._dispatchEvent("close");
   }
 
   handleSlotValueChange(evt) {
     evt.stopPropagation(); // stop the event from bubbling up (required)
-    console.log("evt", evt.detail);
+    console.log("evt", evt.detail); // TODO: handle the event
   }
 
-  handleClickSaveButton() {}
+  handleClickSaveButton() {
+    this._dispatchEvent("save");
+  }
 
   /**
    * @description click next when selecting a record type
@@ -241,7 +279,12 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
 
   handleChangeRadioRecordType(evt) {
     this.selectedRecordTypeId = evt.detail.value;
-    console.info("this.selectedRecordTypeId", this.selectedRecordTypeId);
+    if (this.debug) {
+      console.info(
+        "[LwcDynamicRecordEditForm] Selected RecordType Id",
+        this.selectedRecordTypeId
+      );
+    }
   }
 
   _init() {
@@ -263,6 +306,19 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
     this.status.showRecordTypeSelection =
       !this.disableRecordTypeSupport &&
       hasMultipleRecordTypes(this._recordTypes);
-    console.log("this._recordTypes", this._recordTypes);
+
+    if (this.debug) {
+      console.info("[LwcDynamicRecordEditForm] RecordTypes", this._recordTypes);
+    }
+  }
+
+  _dispatchEvent(name, detail) {
+    this.dispatchEvent(
+      new CustomEvent(name, {
+        detail,
+        composed: this.propagateEvents,
+        bubbles: this.propagateEvents,
+      })
+    );
   }
 }

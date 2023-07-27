@@ -1,12 +1,13 @@
 <template>
-    <template lwc:if={computeShowRecordEditFormLoading}>
+    <template lwc:if={status.recordFormLoading}>
         <section class="stencil slds-var-m-bottom_small"></section>
         <section class="stencil slds-var-m-bottom_small"></section>
         <section class="stencil"></section>
     </template>
 
     <lightning-record-edit-form object-api-name={objectApiName} onerror={handleError} onload={handleLoad}
-        onsuccess={handleSuccess} record-type-id={selectedRecordTypeId} density={density} form-class={formClass}>
+        onsubmit={handleSubmit} onsuccess={handleSuccess} record-type-id={selectedRecordTypeId} density={density}
+        form-class={formClass}>
         <lightning-messages></lightning-messages>
 
         <slot onslotvaluechange={handleSlotValueChange}></slot>
@@ -80,4 +81,6 @@
             </lightning-button>
         </footer>
     </lightning-record-edit-form>
+
+    <lightning-spinner lwc:if={status.overlayLoading} alternative-text="Loading" variant="brand"></lightning-spinner>
 </template>
