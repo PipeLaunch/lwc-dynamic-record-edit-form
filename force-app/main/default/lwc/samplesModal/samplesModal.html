@@ -1,0 +1,15 @@
+<template>
+    <lightning-modal-header label="Create new Contact"></lightning-modal-header>
+
+    <lightning-modal-body>
+        <c-lwc-dynamic-record-edit-form object-api-name="Contact" debug></c-lwc-dynamic-record-edit-form>
+    </lightning-modal-body>
+
+    <lightning-modal-footer>
+        <section class="slds-grid slds-grid_align-center">
+            <lightning-button label="Cancel" class="slds-var-m-right_x-small"
+                onclick={handleClickCancelButton}></lightning-button>
+            <lightning-button variant="brand" label={computeLabel} onclick={handleClickSaveButton}></lightning-button>
+        </section>
+    </lightning-modal-footer>
+</template>

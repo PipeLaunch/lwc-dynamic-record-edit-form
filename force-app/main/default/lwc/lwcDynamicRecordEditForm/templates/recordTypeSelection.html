@@ -7,7 +7,7 @@
         </lightning-radio-group>
     </fieldset>
 
-    <footer class="slds-modal__footer slds-var-m-top_medium slds-text-align_right">
+    <footer lwc:if={showFooter} class={computeRecordTypeFooterClasses}>
         <lightning-button variant="neutral" class="slds-var-m-top_small slds-var-m-right_x-small" label={labels.CANCEL}
             onclick={handleClickCancelButton}>
         </lightning-button>

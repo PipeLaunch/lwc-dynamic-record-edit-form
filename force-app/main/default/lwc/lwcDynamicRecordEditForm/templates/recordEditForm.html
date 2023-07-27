@@ -69,10 +69,7 @@
             </template>
         </template>
 
-
-
-
-        <footer class="slds-modal__footer slds-text-align_center">
+        <footer lwc:if={showFooter} class={computeRecordFormFooterClasses}>
             <lightning-button variant="neutral" class="slds-var-m-top_small slds-var-m-right_x-small"
                 label={labels.CANCEL} onclick={handleClickCancelButton}>
             </lightning-button>

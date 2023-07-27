@@ -23,6 +23,7 @@ import {
   getDefaultRecordTypeId,
 } from "./recordTypesUtils";
 import { processLayoutSections } from "./layoutUtils";
+import * as styles from "./lwcDynamicRecordEditFormStyles";
 export default class LwcDynamicRecordEditForm extends LightningElement {
   /**
    * @property {boolean} debug - true to see debug messages in the console.
@@ -83,6 +84,26 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   @api accordion = false;
 
   /**
+   * @property {"modal"|"clean"} footerStyle - Style for the footer
+   */
+  @api footerStyle = "clean";
+
+  /**
+   * @property {string} recordTypeFooterClasses - Custom classes for the footer on the record type selection view
+   */
+  @api recordTypeFooterClasses = "";
+
+  /**
+   * @property {string} recordFormFooterClasses - Custom classes for the footer on the record edit form view
+   */
+  @api recordFormFooterClasses = "";
+
+  /**
+   * @property {boolean} showFooter - Show the footer with native buttons
+   */
+  @api showFooter = false;
+
+  /**
    * @property {object} values - default values to be applied
    * format
    * {
@@ -108,8 +129,8 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   }
 
   @track status = {
-    recordFormLoading: true,
-    loading: false,
+    recordFormLoading: true, // true while it's loading the record edit form component
+    loading: false, // initial loading
     overlayLoading: false, // show an overlay loading when submitting the form to prevent any interaction
     loadingMessage: DEFAULT_LABELS.LOADING_OBJECT_INFO,
     showRecordTypeSelection: false,
@@ -192,6 +213,26 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
    */
   get computeRadioRecordTypesOptions() {
     return computeRadioRecordTypesOptions(this._recordTypes);
+  }
+
+  /**
+   * @type {string} Classes for the footer on the record type selection view
+   */
+  get computeRecordTypeFooterClasses() {
+    return styles.computeRecordTypeFooterClasses(
+      this.footerStyle,
+      this.recordTypeFooterClasses
+    );
+  }
+
+  /**
+   * @type {string} Classes for the footer on the record edit form view
+   */
+  get computeRecordFormFooterClasses() {
+    return styles.computeRecordFormFooterClasses(
+      this.footerStyle,
+      this.recordFormFooterClasses
+    );
   }
 
   handleError(evt) {
@@ -294,6 +335,12 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
 
   _nextStep() {
     if (this.selectedRecordTypeId) {
+      this._dispatchEvent("recordtypeselected", {
+        id: this.selectedRecordTypeId,
+        label:
+          this._recordTypes.find((rt) => rt.id === this.selectedRecordTypeId)
+            ?.label || "",
+      });
       this.status.showRecordTypeSelection = false;
     }
   }
@@ -303,9 +350,14 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
 
     this._recordTypes = extractRecordTypes(objectInfo);
     this.selectedRecordTypeId = getDefaultRecordTypeId(this._recordTypes);
-    this.status.showRecordTypeSelection =
+
+    const showRecordTypeSelection =
       !this.disableRecordTypeSupport &&
       hasMultipleRecordTypes(this._recordTypes);
+    if (showRecordTypeSelection) {
+      this._dispatchEvent("recordtypeselection");
+    }
+    this.status.showRecordTypeSelection = showRecordTypeSelection;
 
     if (this.debug) {
       console.info("[LwcDynamicRecordEditForm] RecordTypes", this._recordTypes);
