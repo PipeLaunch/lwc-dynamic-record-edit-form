@@ -1,6 +1,7 @@
 export const DEFAULT_LABELS = {
   CANCEL: "Cancel",
   SAVE: "Save",
+  NEXT: "Next",
   SELECT_A_RECORD_TYPE: "Select a record type",
   LOADING_OBJECT_INFO: "Loading object info...",
 };

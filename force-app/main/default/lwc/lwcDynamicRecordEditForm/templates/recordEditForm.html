@@ -1,17 +1,61 @@
 <template>
-    <lightning-record-edit-form object-api-name={objectApiName} onerror={handleError} onload={handleLoad}
-        onsuccess={handleSuccess} record-type-id={recordTypeId} density={density} form-class={formClass}>
-        <lightning-messages></lightning-messages>
-        <slot></slot>
-        <lightning-input-field field-name="FirstName"></lightning-input-field>
+    <template lwc:if={computeShowRecordEditFormLoading}>
+        <section class="stencil slds-var-m-bottom_small"></section>
+        <section class="stencil slds-var-m-bottom_small"></section>
+        <section class="stencil"></section>
+    </template>
 
-        <footer class="slds-modal__footer2 slds-text-align_center">
+    <lightning-record-edit-form object-api-name={objectApiName} onerror={handleError} onload={handleLoad}
+        onsuccess={handleSuccess} record-type-id={selectedRecordTypeId} density={density} form-class={formClass}>
+        <lightning-messages></lightning-messages>
+
+        <slot onslotvaluechange={handleSlotValueChange}></slot>
+
+
+
+        <template for:each={layoutSections} for:item="section">
+            <template lwc:if={section.id}>
+                <h3 key={section.id}
+                    class="slds-section__title slds-theme_shade slds-var-m-top_medium slds-var-m-bottom_x-small"
+                    name={section.id}>
+                    <span class="section-header-title slds-var-p-horizontal_small">
+                        {section.heading}
+                    </span>
+                </h3>
+
+                <template for:each={section.layoutRows} for:item="layoutRow">
+                    <template for:each={layoutRow.layoutItems} for:item="layoutItem">
+                        <div lwc:if={layoutItem._elementLabel} key={layoutItem._elementLabel}
+                            class="slds-form-element__label slds-form-element__legend slds-lookup">
+                            {layoutItem._elementLabel}</div>
+
+                        <template for:each={layoutItem.layoutComponents} for:item="layoutComponent">
+                            <lightning-input-field if:true={layoutComponent.apiName} key={layoutComponent.apiName}
+                                field-name={layoutComponent.apiName} data-label={layoutComponent.label}
+                                required={layoutComponent._required} disabled={layoutItem._disabled}>
+                            </lightning-input-field>
+                        </template>
+                    </template>
+                </template>
+            </template>
+
+
+
+
+
+            <!-- </lightning-accordion-section> -->
+        </template>
+        <!-- </lightning-accordion> -->
+
+
+
+        <!-- <footer class="slds-modal__footer slds-text-align_center">
             <lightning-button variant="neutral" class="slds-var-m-top_small slds-var-m-right_x-small"
                 label={labels.CANCEL} onclick={handleClickCancelButton}>
             </lightning-button>
             <lightning-button variant="brand" class="slds-var-m-top_small" type="submit" label={labels.SAVE}
                 onclick={handleClickSaveButton}>
             </lightning-button>
-        </footer>
+        </footer> -->
     </lightning-record-edit-form>
 </template>

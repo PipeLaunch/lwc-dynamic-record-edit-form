@@ -14,6 +14,10 @@ Generic LWC component to output a record creation form with all exposed fields. 
 
 -
 
+## Limitations
+
+-   No record type description (only name)
+
 ## Instructions
 
 ### Use on your project
