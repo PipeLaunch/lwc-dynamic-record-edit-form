@@ -72,3 +72,18 @@ export function guid() {
     s4()
   );
 }
+
+export function sortByEvenIndex(arr) {
+  const evenIndexItems = [];
+  const oddIndexItems = [];
+
+  arr.forEach((item, index) => {
+    if (index % 2 === 0) {
+      oddIndexItems.push(item);
+    } else {
+      evenIndexItems.push(item);
+    }
+  });
+
+  return evenIndexItems.concat(oddIndexItems);
+}

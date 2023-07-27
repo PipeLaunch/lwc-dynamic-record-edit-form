@@ -1,4 +1,4 @@
-# LWC Dynamic Record Edit Form (TODO)
+# LWC Dynamic Record Edit Form (Alpha)
 
 ![sample](sample.png "sample")
 

@@ -27,7 +27,8 @@
                             <template for:each={layoutItem.layoutComponents} for:item="layoutComponent">
                                 <lightning-input-field lwc:if={layoutComponent.apiName} key={layoutComponent.apiName}
                                     field-name={layoutComponent.apiName} required={layoutComponent._required}
-                                    disabled={layoutItem._disabled} class={layoutComponent._computedClasses}>
+                                    disabled={layoutItem._disabled} value={layoutComponent._value}
+                                    class={layoutComponent._computedClasses}>
                                 </lightning-input-field>
                             </template>
                         </template>
@@ -57,8 +58,9 @@
 
                         <template for:each={layoutItem.layoutComponents} for:item="layoutComponent">
                             <lightning-input-field lwc:if={layoutComponent.apiName} key={layoutComponent.apiName}
-                                field-name={layoutComponent.apiName} required={layoutComponent._required}
-                                disabled={layoutItem._disabled} class={layoutComponent._computedClasses}>
+                                value={layoutComponent._value} field-name={layoutComponent.apiName}
+                                required={layoutComponent._required} disabled={layoutItem._disabled}
+                                class={layoutComponent._computedClasses}>
                             </lightning-input-field>
                         </template>
                     </template>

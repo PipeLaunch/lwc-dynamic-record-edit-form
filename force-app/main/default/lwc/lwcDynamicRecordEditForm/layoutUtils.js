@@ -1,9 +1,14 @@
-import { deepCopy, guid } from "./lwcDynamicRecordEditFormUtils";
+import {
+  deepCopy,
+  guid,
+  sortByEvenIndex,
+} from "./lwcDynamicRecordEditFormUtils";
 
 export function processLayoutSections({
   recordInfo,
   fieldsProperties,
   fieldsToIgnore = [],
+  values = null,
 }) {
   if (
     !Array.isArray(recordInfo?.layout?.sections) ||
@@ -14,9 +19,6 @@ export function processLayoutSections({
 
   // clone the layout object. Needed to manipulate the object received
   const sections = deepCopy(recordInfo.layout.sections);
-
-  if (Array.isArray(fieldsToIgnore) && fieldsToIgnore.length) {
-  }
 
   sections.forEach((section) => {
     section.layoutRows.forEach((row) => {
@@ -37,42 +39,70 @@ export function processLayoutSections({
 
         layoutItem._disabled = !layoutItem.editableForNew;
 
-        // check if the field is required by receiving data from the object info
         layoutItem.layoutComponents.forEach((component) => {
-          if (fieldsProperties[component.apiName]) {
-            if (
-              fieldsProperties[component.apiName]?.dataType?.toLowerCase() ===
-              "boolean"
-            ) {
-              component._required = false; // Boolean / checkbox fields return always as required from the getObjectInfos API
-            } else {
-              component._required =
-                fieldsProperties[component.apiName].required;
-            }
-          }
+          defineRequiredProperty(
+            component,
+            fieldsProperties[component.apiName]
+          );
+          overrideValues(component, values);
         });
       });
     });
   });
 
-  // sort array because with 2 columns layout the order is not correct
-
-  // do not show empty sections
+  // do not show empty sections (TODO: check also for hidden)
   const filteredSections = sections.filter((section) =>
     hasLayoutComponents(section)
   );
 
-  console.log("sections", filteredSections);
-
+  // sort array because with 2 columns layout the order is not correct
   for (const section of filteredSections) {
     if (section.columns === 2) {
       section.layoutRows = sortByEvenIndex(section.layoutRows);
     }
   }
 
-  console.log("sections sorted", filteredSections);
+  console.info("sections sorted", filteredSections);
 
   return filteredSections;
+}
+
+/**
+ * @description check if the field is required by receiving data from the object info
+ * @param {*} component
+ * @param {*} fieldProperty
+ * @returns
+ */
+function defineRequiredProperty(component, fieldProperty) {
+  if (!fieldProperty) {
+    return;
+  }
+
+  if (fieldProperty?.dataType?.toLowerCase() === "boolean") {
+    component._required = false; // Boolean / checkbox fields return always as required from the getObjectInfos API
+  } else {
+    component._required = fieldProperty.required;
+  }
+}
+
+function overrideValues(component, values) {
+  if (!values || !values[component.apiName]) {
+    return; // no values to override
+  }
+
+  const value = values[component.apiName];
+  if (value.hasOwnProperty("value")) {
+    component._value = value.value;
+  }
+  if (value.hasOwnProperty("required") && typeof value.required === "boolean") {
+    component._required = true;
+  }
+  if (value.hasOwnProperty("disabled") && typeof value.disabled === "boolean") {
+    component._disabled = true;
+  }
+  if (value.hasOwnProperty("hidden") && typeof value.hidden === "boolean") {
+    component._computedClasses = "slds-hide";
+  }
 }
 
 function computeElementLabel(label, layoutComponents) {
@@ -80,19 +110,6 @@ function computeElementLabel(label, layoutComponents) {
     hasComponentWithSameLabel(label, layoutComponents)
     ? ""
     : label;
-}
-
-function hasLayoutComponents(section) {
-  return (
-    Array.isArray(section.layoutRows) &&
-    section.layoutRows.some((row) =>
-      row.layoutItems.some(
-        (layoutItem) =>
-          Array.isArray(layoutItem.layoutComponents) &&
-          layoutItem.layoutComponents.length
-      )
-    )
-  );
 }
 
 function ignoreFields(fieldsToIgnore, layoutComponents) {
@@ -110,21 +127,19 @@ function ignoreFields(fieldsToIgnore, layoutComponents) {
   );
 }
 
-function hasComponentWithSameLabel(label, layoutComponents) {
-  return layoutComponents.some((component) => component.label === label);
+function hasLayoutComponents(section) {
+  return (
+    Array.isArray(section.layoutRows) &&
+    section.layoutRows.some((row) =>
+      row.layoutItems.some(
+        (layoutItem) =>
+          Array.isArray(layoutItem.layoutComponents) &&
+          layoutItem.layoutComponents.length
+      )
+    )
+  );
 }
 
-function sortByEvenIndex(arr) {
-  const evenIndexItems = [];
-  const oddIndexItems = [];
-
-  arr.forEach((item, index) => {
-    if (index % 2 === 0) {
-      oddIndexItems.push(item);
-    } else {
-      evenIndexItems.push(item);
-    }
-  });
-
-  return evenIndexItems.concat(oddIndexItems);
+function hasComponentWithSameLabel(label, layoutComponents) {
+  return layoutComponents.some((component) => component.label === label);
 }

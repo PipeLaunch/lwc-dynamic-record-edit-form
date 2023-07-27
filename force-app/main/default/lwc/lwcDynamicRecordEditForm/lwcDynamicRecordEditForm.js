@@ -80,6 +80,20 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   @api accordion = false;
 
   /**
+   * @property {object} values - default values to be applied
+   * format
+   * {
+   *    objectApiName: {
+   *      value: "default value",
+   *      hidden: true, // hide on the page (css hidden class)
+   *      required: true, // force to make it required
+   *      disabled: true, // force to make it disabled
+   *    }
+   * }
+   */
+  @api values = null;
+
+  /**
    * @property {object} labels - An object with the labels for the component.
    */
   @api get labels() {
@@ -97,14 +111,13 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
     showRecordTypeSelection: false,
   };
 
-  _objectApiName = null; // The API name of the object.
   _recordTypes = []; // Array of record types, empty if no record types
   selectedRecordTypeId = null; // The ID of the selected record type
   layoutSections = []; // Array of page layout sections
   _fieldsProperties = {}; // Object with the properties of the fields fetched from the getObjectInfo
 
   @wire(getObjectInfo, {
-    objectApiName: "$_objectApiName",
+    objectApiName: "$objectApiName",
   })
   async getObjectInfoResponse(response) {
     try {
@@ -153,6 +166,9 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   @api
   submit() {}
 
+  /**
+   * @description next is used when selecting a record type
+   */
   @api next() {
     this._nextStep();
   }
@@ -172,6 +188,7 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
 
   handleError(evt) {
     this.status.recordFormLoading = false;
+    console.error("handle form error", evt.detail);
   }
 
   handleLoad(evt) {
@@ -183,11 +200,21 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
       recordInfo: evt.detail,
       fieldsProperties: this._fieldsProperties,
       fieldsToIgnore: this.fieldsToIgnore,
+      values: this.values,
     });
     this.status.recordFormLoading = false;
   }
 
-  handleSuccess(evt) {}
+  handleSuccess(evt) {
+    console.info("handle form success", evt.detail);
+    this.dispatchEvent(
+      new CustomEvent("success", {
+        detail: evt.detail,
+        composed: this.propagateEvents,
+        bubbles: this.propagateEvents,
+      })
+    );
+  }
 
   handleClickCancelButton() {
     this.dispatchEvent(
@@ -205,6 +232,9 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
 
   handleClickSaveButton() {}
 
+  /**
+   * @description click next when selecting a record type
+   */
   handleClickNextButton() {
     this._nextStep();
   }
@@ -215,10 +245,8 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   }
 
   _init() {
-    if (!this.disableRecordTypeSupport) {
-      this.status.loading = true;
-      this.status.loadingMessage = DEFAULT_LABELS.LOADING_OBJECT_INFO;
-    }
+    this.status.loading = true;
+    this.status.loadingMessage = DEFAULT_LABELS.LOADING_OBJECT_INFO;
   }
 
   _nextStep() {
