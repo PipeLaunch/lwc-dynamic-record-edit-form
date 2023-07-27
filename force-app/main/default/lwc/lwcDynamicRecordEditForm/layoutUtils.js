@@ -1,19 +1,25 @@
-import { deepCopy } from "./lwcDynamicRecordEditFormUtils";
+import { deepCopy, guid } from "./lwcDynamicRecordEditFormUtils";
 
-export function computeLayoutSections(recordInfo) {
+export function processLayoutSections({
+  recordInfo,
+  fieldsProperties,
+  fieldsToIgnore = [],
+}) {
   if (
-    !recordInfo?.layout ||
-    !Array.isArray(recordInfo.layout.sections) ||
+    !Array.isArray(recordInfo?.layout?.sections) ||
     !recordInfo.layout.sections.length
   ) {
     return [];
   }
 
-  const sections = deepCopy(recordInfo.layout.sections); // clone the layout object. Needed to manipulate the object received
+  // clone the layout object. Needed to manipulate the object received
+  const sections = deepCopy(recordInfo.layout.sections);
 
   sections.forEach((section) => {
     section.layoutRows.forEach((row) => {
       row.layoutItems.forEach((layoutItem) => {
+        layoutItem._id = guid(); // add unique id for iterating on the template
+
         // remove fields that are in the exclude list (already hardcoded on the modal form)
         // layoutItem.layoutComponents = layoutItem.layoutComponents.filter(
         //   (component) => !fieldsToExclude.includes(component.apiName)

@@ -25,14 +25,16 @@
 
                 <template for:each={section.layoutRows} for:item="layoutRow">
                     <template for:each={layoutRow.layoutItems} for:item="layoutItem">
-                        <div lwc:if={layoutItem._elementLabel} key={layoutItem._elementLabel}
+                        <!-- compound fields heading label  -->
+                        <div lwc:if={layoutItem._elementLabel} key={layoutItem._id}
                             class="slds-form-element__label slds-form-element__legend slds-lookup">
-                            {layoutItem._elementLabel}</div>
+                            {layoutItem._elementLabel}
+                        </div>
 
                         <template for:each={layoutItem.layoutComponents} for:item="layoutComponent">
-                            <lightning-input-field if:true={layoutComponent.apiName} key={layoutComponent.apiName}
-                                field-name={layoutComponent.apiName} data-label={layoutComponent.label}
-                                required={layoutComponent._required} disabled={layoutItem._disabled}>
+                            <lightning-input-field lwc:if={layoutComponent.apiName} key={layoutComponent.apiName}
+                                field-name={layoutComponent.apiName} required={layoutComponent._required}
+                                disabled={layoutItem._disabled} class={layoutComponent._computedClasses}>
                             </lightning-input-field>
                         </template>
                     </template>

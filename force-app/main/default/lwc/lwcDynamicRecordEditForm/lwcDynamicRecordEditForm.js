@@ -22,8 +22,13 @@ import {
   computeRadioRecordTypesOptions,
   getDefaultRecordTypeId,
 } from "./recordTypesUtils";
-import { computeLayoutSections } from "./layoutUtils";
+import { processLayoutSections } from "./layoutUtils";
 export default class LwcDynamicRecordEditForm extends LightningElement {
+  /**
+   * @property {boolean} debug - true to see debug messages in the console.
+   */
+  @api debug = false;
+
   /**
    * @property {string} objectApiName - The API name of the object.
    */
@@ -65,6 +70,11 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   @api hideLoadingRecordForm = false;
 
   /**
+   * @property {string[]} fieldsToIgnore - Array of then fields API name to ignore. E.g. manually added to the form on the slot
+   */
+  @api fieldsToIgnore = [];
+
+  /**
    * @property {object} labels - An object with the labels for the component.
    */
   @api get labels() {
@@ -86,6 +96,7 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   _recordTypes = []; // Array of record types, empty if no record types
   selectedRecordTypeId = null; // The ID of the selected record type
   layoutSections = []; // Array of page layout sections
+  _fieldsProperties = {}; // Object with the properties of the fields fetched from the getObjectInfo
 
   @wire(getObjectInfo, {
     objectApiName: "$_objectApiName",
@@ -94,7 +105,7 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
     try {
       if (response.data) {
         console.info("response.data", response.data);
-        this._processRecordTypes(response.data);
+        this._processGetObjectInfoResponse(response.data);
         this.status.loading = false;
       } else if (response.error) {
         throw new Error(response.error);
@@ -134,6 +145,13 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
     }
   }
 
+  @api
+  submit() {}
+
+  @api next() {
+    this._nextStep();
+  }
+
   /**
    * @type {Object[]} Array of record types options
    */
@@ -152,8 +170,15 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   }
 
   handleLoad(evt) {
+    if (!this.status.recordFormLoading) {
+      return; // only run once
+    }
     console.info("handle load", evt.detail);
-    this.layoutSections = computeLayoutSections(evt.detail);
+    this.layoutSections = processLayoutSections({
+      recordInfo: evt.detail,
+      fieldsProperties: this._fieldsProperties,
+      fieldsToIgnore: this.fieldsToIgnore,
+    });
     this.status.recordFormLoading = false;
   }
 
@@ -176,9 +201,7 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   handleClickSaveButton() {}
 
   handleClickNextButton() {
-    if (this.selectedRecordTypeId) {
-      this.status.showRecordTypeSelection = false;
-    }
+    this._nextStep();
   }
 
   handleChangeRadioRecordType(evt) {
@@ -190,16 +213,23 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
     if (!this.disableRecordTypeSupport) {
       this.status.loading = true;
       this.status.loadingMessage = DEFAULT_LABELS.LOADING_OBJECT_INFO;
-      this._objectApiName = this.objectApiName;
     }
   }
 
-  _processRecordTypes(objectInfo) {
+  _nextStep() {
+    if (this.selectedRecordTypeId) {
+      this.status.showRecordTypeSelection = false;
+    }
+  }
+
+  _processGetObjectInfoResponse(objectInfo) {
+    this._fieldsProperties = objectInfo.fields; // save the original fields properties
+
     this._recordTypes = extractRecordTypes(objectInfo);
     this.selectedRecordTypeId = getDefaultRecordTypeId(this._recordTypes);
-    this.status.showRecordTypeSelection = hasMultipleRecordTypes(
-      this._recordTypes
-    );
+    this.status.showRecordTypeSelection =
+      !this.disableRecordTypeSupport &&
+      hasMultipleRecordTypes(this._recordTypes);
     console.log("this._recordTypes", this._recordTypes);
   }
 }
