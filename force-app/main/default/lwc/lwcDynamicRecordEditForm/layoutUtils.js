@@ -30,30 +30,27 @@ export function processLayoutSections({
         );
 
         // only show element label if needed (e.g. other address -> compound field)
-        layoutItem._elementLabel =
-          hasComponentWithSameLabel(
-            layoutItem.label,
-            layoutItem.layoutComponents
-          ) || layoutItem.layoutComponents.length < 2
-            ? ""
-            : layoutItem.label;
+        layoutItem._elementLabel = computeElementLabel(
+          layoutItem.label,
+          layoutItem.layoutComponents
+        );
+
+        layoutItem._disabled = !layoutItem.editableForNew;
 
         // check if the field is required by receiving data from the object info
         layoutItem.layoutComponents.forEach((component) => {
-          // if (sObjectObjectInfoFields[component.apiName]) {
-          //   if (
-          //     sObjectObjectInfoFields[
-          //       component.apiName
-          //     ].dataType.toLowerCase() === "boolean"
-          //   ) {
-          //     component._required = false; // Boolean / checkbox fields return always as required from the getObjectInfos API
-          //   } else {
-          //     component._required =
-          //       sObjectObjectInfoFields[component.apiName].required;
-          //   }
-          // }
+          if (fieldsProperties[component.apiName]) {
+            if (
+              fieldsProperties[component.apiName]?.dataType?.toLowerCase() ===
+              "boolean"
+            ) {
+              component._required = false; // Boolean / checkbox fields return always as required from the getObjectInfos API
+            } else {
+              component._required =
+                fieldsProperties[component.apiName].required;
+            }
+          }
         });
-        // layoutItem._disabled = !layoutItem.editableForNew;
       });
     });
   });
@@ -76,6 +73,13 @@ export function processLayoutSections({
   console.log("sections sorted", filteredSections);
 
   return filteredSections;
+}
+
+function computeElementLabel(label, layoutComponents) {
+  return layoutComponents.length < 2 ||
+    hasComponentWithSameLabel(label, layoutComponents)
+    ? ""
+    : label;
 }
 
 function hasLayoutComponents(section) {

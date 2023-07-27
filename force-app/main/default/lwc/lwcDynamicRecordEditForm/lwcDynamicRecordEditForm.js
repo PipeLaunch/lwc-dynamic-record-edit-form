@@ -72,7 +72,7 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   /**
    * @property {string[]} fieldsToIgnore - Array of then fields API name to ignore. E.g. manually added to the form on the slot
    */
-  @api fieldsToIgnore = ["Custom_Checkbox__c", "Custom_Text__c"];
+  @api fieldsToIgnore = [];
 
   /**
    * @property {object} labels - An object with the labels for the component.
