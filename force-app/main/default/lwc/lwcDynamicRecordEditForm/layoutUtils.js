@@ -15,15 +15,19 @@ export function processLayoutSections({
   // clone the layout object. Needed to manipulate the object received
   const sections = deepCopy(recordInfo.layout.sections);
 
+  if (Array.isArray(fieldsToIgnore) && fieldsToIgnore.length) {
+  }
+
   sections.forEach((section) => {
     section.layoutRows.forEach((row) => {
       row.layoutItems.forEach((layoutItem) => {
         layoutItem._id = guid(); // add unique id for iterating on the template
 
-        // remove fields that are in the exclude list (already hardcoded on the modal form)
-        // layoutItem.layoutComponents = layoutItem.layoutComponents.filter(
-        //   (component) => !fieldsToExclude.includes(component.apiName)
-        // );
+        // remove fields that are in the exclude list
+        layoutItem.layoutComponents = ignoreFields(
+          fieldsToIgnore,
+          layoutItem.layoutComponents
+        );
 
         // only show element label if needed (e.g. other address -> compound field)
         layoutItem._elementLabel =
@@ -56,17 +60,50 @@ export function processLayoutSections({
 
   // sort array because with 2 columns layout the order is not correct
 
-  console.log("sections", sections);
+  // do not show empty sections
+  const filteredSections = sections.filter((section) =>
+    hasLayoutComponents(section)
+  );
 
-  for (const section of sections) {
+  console.log("sections", filteredSections);
+
+  for (const section of filteredSections) {
     if (section.columns === 2) {
       section.layoutRows = sortByEvenIndex(section.layoutRows);
     }
   }
 
-  console.log("sections sorted", sections);
+  console.log("sections sorted", filteredSections);
 
-  return sections;
+  return filteredSections;
+}
+
+function hasLayoutComponents(section) {
+  return (
+    Array.isArray(section.layoutRows) &&
+    section.layoutRows.some((row) =>
+      row.layoutItems.some(
+        (layoutItem) =>
+          Array.isArray(layoutItem.layoutComponents) &&
+          layoutItem.layoutComponents.length
+      )
+    )
+  );
+}
+
+function ignoreFields(fieldsToIgnore, layoutComponents) {
+  if (!Array.isArray(fieldsToIgnore) || !fieldsToIgnore.length) {
+    return layoutComponents;
+  }
+
+  const normalizedFieldsToIgnore = fieldsToIgnore.map((field) =>
+    field?.trim()?.toLowerCase()
+  );
+
+  return layoutComponents.filter(
+    (component) =>
+      !normalizedFieldsToIgnore.includes(component.apiName?.toLowerCase())
+  );
 }
 
 function hasComponentWithSameLabel(label, layoutComponents) {

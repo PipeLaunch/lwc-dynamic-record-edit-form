@@ -294,7 +294,17 @@
                                 "sortable": false
                             }
                         ]
-                    },
+                    }
+                ],
+                "rows": 8,
+                "useHeading": true
+            },
+            {
+                "collapsible": false,
+                "columns": 2,
+                "heading": "Custom Section",
+                "id": "01B7Y00000FDu2uUAD",
+                "layoutRows": [
                     {
                         "layoutItems": [
                             {
@@ -313,24 +323,6 @@
                                 "sortable": false
                             },
                             {
-                                "editableForNew": false,
-                                "editableForUpdate": false,
-                                "label": "",
-                                "layoutComponents": [
-                                    {
-                                        "apiName": null,
-                                        "componentType": "EmptySpace"
-                                    }
-                                ],
-                                "lookupIdApiName": null,
-                                "required": false,
-                                "sortable": false
-                            }
-                        ]
-                    },
-                    {
-                        "layoutItems": [
-                            {
                                 "editableForNew": true,
                                 "editableForUpdate": true,
                                 "label": "Custom Text",
@@ -344,25 +336,11 @@
                                 "lookupIdApiName": null,
                                 "required": false,
                                 "sortable": false
-                            },
-                            {
-                                "editableForNew": false,
-                                "editableForUpdate": false,
-                                "label": "",
-                                "layoutComponents": [
-                                    {
-                                        "apiName": null,
-                                        "componentType": "EmptySpace"
-                                    }
-                                ],
-                                "lookupIdApiName": null,
-                                "required": false,
-                                "sortable": false
                             }
                         ]
                     }
                 ],
-                "rows": 10,
+                "rows": 1,
                 "useHeading": true
             },
             {
@@ -3343,7 +3321,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "5867E8",
-                "iconUrl": "https://my.salesforce.com/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://scratch.my.salesforce.com/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
@@ -10405,7 +10383,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "1B96FF",
-                "iconUrl": "https://my.salesforce.com/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://ability-drive-8759-dev-ed.scratch.my.salesforce.com/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         },
@@ -13019,7 +12997,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "5867E8",
-                "iconUrl": "https://my.salesforce.com/img/icon/t4v35/standard/contact_120.png"
+                "iconUrl": "https://ability-drive-8759-dev-ed.scratch.my.salesforce.com/img/icon/t4v35/standard/contact_120.png"
             },
             "updateable": true
         }
