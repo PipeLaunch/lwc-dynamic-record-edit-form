@@ -195,17 +195,15 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   }
 
   /**
-   * @description submit the form
+   * @description submits the form or the record type selection
+   * depending on the current view
    */
   @api submit() {
-    this.template.querySelector("lightning-record-edit-form")?.submit();
-  }
-
-  /**
-   * @description next is used when selecting a record type
-   */
-  @api next() {
-    this._nextStep();
+    if (this.status.showRecordTypeSelection) {
+      this._nextStep();
+    } else {
+      this.template.querySelector("lightning-record-edit-form")?.submit();
+    }
   }
 
   /**
@@ -347,9 +345,9 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
     if (this.selectedRecordTypeId) {
       this._dispatchEvent("recordtypeselected", {
         id: this.selectedRecordTypeId,
-        label:
+        name:
           this._recordTypes.find((rt) => rt.id === this.selectedRecordTypeId)
-            ?.label || "",
+            ?.name || "",
       });
       this.status.showRecordTypeSelection = false;
     }

@@ -1,8 +1,9 @@
 <template>
-    <lightning-modal-header label="Create new Contact"></lightning-modal-header>
+    <lightning-modal-header label={computeModalHeader}></lightning-modal-header>
 
     <lightning-modal-body>
-        <c-lwc-dynamic-record-edit-form object-api-name="Contact"></c-lwc-dynamic-record-edit-form>
+        <c-lwc-dynamic-record-edit-form object-api-name="Contact" onrecordtypeselected={handlerRecordTypeSelected}
+            onerror={handleError} onsuccess={handleSuccess}></c-lwc-dynamic-record-edit-form>
     </lightning-modal-body>
 
     <lightning-modal-footer>

@@ -38,7 +38,7 @@ ehthumbs.db
 $RECYCLE.BIN/
 
 # Visual Studio Code IDE
-.vscode/
+# .vscode/
 
 
 password.env
