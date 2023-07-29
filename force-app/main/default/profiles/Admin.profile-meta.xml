@@ -23,6 +23,21 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Custom_Test_Object2__c.Exchange_Rate__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Custom_Test_Object2__c.Rating__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Custom_Test_Object2__c.Value__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Custom_Test_Object__c.Email__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -41,6 +56,9 @@
         <recordType>Contact.Partner</recordType>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Custom_Test_Object2__c-Custom Test Object 2 Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Custom_Test_Object__c-Custom Test Object Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
@@ -53,6 +71,15 @@
         <allowRead>true</allowRead>
         <modifyAllRecords>true</modifyAllRecords>
         <object>Another_Custom_Object__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
+        <object>Custom_Test_Object2__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <objectPermissions>
@@ -76,6 +103,10 @@
     </recordTypeVisibilities>
     <tabVisibilities>
         <tab>Another_Custom_Object__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Custom_Test_Object2__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>

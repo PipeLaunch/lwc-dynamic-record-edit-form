@@ -4,6 +4,7 @@
         "helptext",
         "onslotvaluechange",
         "recordtypeselected",
-        "recordtypeselection"
+        "recordtypeselection",
+        "slotvaluechange"
     ]
 }

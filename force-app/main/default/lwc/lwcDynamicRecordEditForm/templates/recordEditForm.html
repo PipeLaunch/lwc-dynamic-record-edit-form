@@ -1,10 +1,4 @@
 <template>
-    <template lwc:if={status.recordFormLoading}>
-        <section class="stencil slds-var-m-bottom_small"></section>
-        <section class="stencil slds-var-m-bottom_small"></section>
-        <section class="stencil"></section>
-    </template>
-
     <lightning-record-edit-form object-api-name={objectApiName} onerror={handleError} onload={handleLoad}
         onsubmit={handleSubmit} onsuccess={handleSuccess} record-type-id={selectedRecordTypeId} density={density}
         form-class={formClass}>
@@ -29,7 +23,7 @@
                                 <lightning-input-field lwc:if={layoutComponent.apiName} key={layoutComponent.apiName}
                                     field-name={layoutComponent.apiName} required={layoutComponent._required}
                                     disabled={layoutItem._disabled} value={layoutComponent._value}
-                                    class={layoutComponent._computedClasses}>
+                                    class={layoutComponent._computedClasses} data-apiname={layoutComponent.apiName}>
                                 </lightning-input-field>
                             </template>
                         </template>
@@ -78,6 +72,12 @@
             </lightning-button>
         </footer>
     </lightning-record-edit-form>
+
+    <template lwc:if={status.recordFormLoading}>
+        <section class="stencil slds-var-m-bottom_small"></section>
+        <section class="stencil slds-var-m-bottom_small"></section>
+        <section class="stencil"></section>
+    </template>
 
     <lightning-spinner lwc:if={status.overlayLoading} alternative-text="Loading" variant="brand"></lightning-spinner>
 </template>

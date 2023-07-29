@@ -11,7 +11,7 @@
 import { track } from "lwc";
 import LightningModal from "lightning/modal";
 
-import { toast, errorToast } from "c/utilsToast";
+import { toast } from "c/utilsToast";
 export default class SamplesModal extends LightningModal {
   @track status = {
     recordTypeName: null,

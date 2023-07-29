@@ -138,7 +138,7 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
 
   _recordTypes = []; // Array of record types, empty if no record types
   selectedRecordTypeId = null; // The ID of the selected record type
-  layoutSections = []; // Array of page layout sections
+  @track layoutSections = []; // Array of page layout sections
   _fieldsProperties = {}; // Object with the properties of the fields fetched from the getObjectInfo
 
   @wire(getObjectInfo, {
@@ -214,6 +214,14 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
     return this.status.showRecordTypeSelection
       ? "record-type"
       : "record-edit-form";
+  }
+
+  @api setValues(values) {
+    this._setValues(values);
+  }
+
+  @api setValue(fieldName, value) {
+    this._setValue(fieldName, value);
   }
 
   /**
@@ -312,7 +320,11 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
 
   handleSlotValueChange(evt) {
     evt.stopPropagation(); // stop the event from bubbling up (required)
-    console.log("evt", evt.detail); // TODO: handle the event
+    if (this.debug) {
+      console.info("Slot change event", evt.detail);
+    }
+
+    this._setValues(evt.detail);
   }
 
   handleClickSaveButton() {
@@ -369,6 +381,27 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
 
     if (this.debug) {
       console.info("[LwcDynamicRecordEditForm] RecordTypes", this._recordTypes);
+    }
+  }
+
+  _setValues(values) {
+    if (!values || !Array.isArray(values) || values.length === 0) {
+      return;
+    }
+
+    values.forEach((value) => {
+      this._setValue(value.apiName, value.value);
+    });
+  }
+
+  _setValue(fieldName, value) {
+    const inputFields = this.template.querySelectorAll("lightning-input-field");
+    if (inputFields) {
+      inputFields.forEach((field) => {
+        if (field.fieldName?.toLowerCase() === fieldName?.toLowerCase()) {
+          field.value = value;
+        }
+      });
     }
   }
 

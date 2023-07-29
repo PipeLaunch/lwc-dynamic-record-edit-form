@@ -1,0 +1,13 @@
+<template>
+    <section class="slds-grid slds-var-p-horizontal_xx-small">
+        <lightning-icon icon-name="custom:custom68" alternative-text="Web"
+            class="slds-var-m-right_small"></lightning-icon>
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-grow">
+            <h2 class="slds-text-heading_large">{status.value}</h2>
+            <lightning-button label="Online rate update" icon-name="utility:refresh"
+                onclick={handleClick}></lightning-button>
+        </div>
+    </section>
+
+    <lightning-spinner lwc:if={status.loading} alternative-text="Loading" size="x-small"></lightning-spinner>
+</template>
