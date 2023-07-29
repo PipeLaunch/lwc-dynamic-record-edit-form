@@ -9,8 +9,11 @@ import { LightningElement } from "lwc";
 
 import samplesModal from "c/samplesModal";
 import { toast } from "c/utilsToast";
+import CUSTOM_LABELS from "./labels";
 
 export default class Samples extends LightningElement {
+  labels = CUSTOM_LABELS;
+
   values = {
     Email__c: {
       value: "sample@gmail.com",
@@ -21,7 +24,13 @@ export default class Samples extends LightningElement {
     },
   };
 
-  fieldsToIgnore = ["Value__c", "OwnerId", "Name"]; // Rating__c
+  values2 = {
+    Rating__c: {
+      hidden: true,
+    },
+  };
+
+  fieldsToIgnore = ["Value__c", "OwnerId", "Name"];
 
   async handleClickButtonShowModal() {
     await samplesModal.open({

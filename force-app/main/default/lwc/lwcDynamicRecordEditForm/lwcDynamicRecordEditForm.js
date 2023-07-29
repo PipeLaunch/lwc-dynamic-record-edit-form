@@ -2,7 +2,7 @@
  * @description       :
  * @author            : samuel@pipelaunch.com
  * @group             : LWC Dynamic Record Edit Form
- * @last modified on  : 2023-07-28
+ * @last modified on  : 2023-07-29
  * @last modified by  : samuel@pipelaunch.com
  * Modifications Log
  * Ver   Date         Author                  Modification
@@ -84,9 +84,9 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   @api accordion = false;
 
   /**
-   * @property {"modal"|"clean"} footerStyle - Style for the footer
+   * @property {"modal"|"simple"} footerStyle - Style for the footer
    */
-  @api footerStyle = "clean";
+  @api footerStyle = "";
 
   /**
    * @property {string} recordTypeFooterClasses - Custom classes for the footer on the record type selection view

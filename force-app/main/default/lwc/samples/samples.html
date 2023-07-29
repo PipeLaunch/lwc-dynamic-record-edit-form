@@ -40,20 +40,17 @@
                     slds-var-p-vertical_small">
 
                     <div class="slds-var-p-horizontal_xx-small slds-grid slds-grid_vertical">
-                        <lightning-slider label="Rating" min="0" max="3"
+                        <lightning-slider label="Rating" min="0" max="3" value="0"
                             onchange={handleSliderChange}></lightning-slider>
                         <div class="slds-grid slds-grid_align-spread slds-text-body_small slds-text-color_weak">
-                            <span>
-                                bad
-                            </span>
-                            <span>
-                                good
-                            </span>
+                            <span>bad</span>
+                            <span>good</span>
                         </div>
                     </div>
 
                     <c-lwc-dynamic-record-edit-form lwc:ref="ratingForm" object-api-name="Custom_Test_Object2__c" debug
-                        show-footer onsuccess={handleSuccess} fields-to-ignore={fieldsToIgnore}>
+                        show-footer onsuccess={handleSuccess} fields-to-ignore={fieldsToIgnore} footer-style="simple"
+                        values={values2} labels={labels}>
                         <lightning-input-field field-name="Value__c"></lightning-input-field>
 
                         <c-sample-mock-api-exchange-rate></c-sample-mock-api-exchange-rate>
