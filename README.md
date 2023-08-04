@@ -9,6 +9,10 @@ Generic LWC component to output a record creation form with all exposed fields. 
 ## Features
 
 -   Integrated on a single component (easy to copy to multiple projects)
+-   No Apex code
+-   Multi-language/translations support
+-   Record type selection/support
+-   Respects object layout
 
 ## Notes
 
@@ -27,7 +31,7 @@ Everything was developed in a single LWC, so you just need a new single componen
 -   Call the component and pass the options
 
 ```
-<c-lwc-dynamic-record-edit-form></c-lwc-dynamic-record-edit-form>
+<c-lwc-dynamic-record-edit-form object-api-name="Contact"></c-lwc-dynamic-record-edit-form>
 ```
 
 ### Testing and learn how to use it
