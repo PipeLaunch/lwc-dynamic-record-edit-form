@@ -5,7 +5,7 @@
       "default": true
     }
   ],
-  "name": "lwc-lookup-native",
+  "name": "lwc-dynamic-record-edit-form",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "57.0"
