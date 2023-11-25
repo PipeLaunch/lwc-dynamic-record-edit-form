@@ -2,7 +2,7 @@
  * @description       :
  * @author            : samuel@pipelaunch.com
  * @group             : LWC Dynamic Record Edit Form
- * @last modified on  : 2023-07-29
+ * @last modified on  : 2023-11-25
  * @last modified by  : samuel@pipelaunch.com
  * Modifications Log
  * Ver   Date         Author                  Modification
@@ -288,6 +288,7 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
     });
 
     this.status.recordFormLoading = false;
+    this._dispatchEvent("load", evt.detail);
   }
 
   handleSuccess(evt) {
