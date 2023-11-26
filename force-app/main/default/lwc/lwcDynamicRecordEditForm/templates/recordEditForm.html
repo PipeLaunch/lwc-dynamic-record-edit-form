@@ -52,9 +52,10 @@
 
                         <template for:each={layoutItem.layoutComponents} for:item="layoutComponent">
                             <lightning-input-field lwc:if={layoutComponent.apiName} key={layoutComponent.apiName}
-                                value={layoutComponent._value} field-name={layoutComponent.apiName}
-                                required={layoutComponent._required} disabled={layoutItem._disabled}
-                                class={layoutComponent._computedClasses}>
+                                data-fieldname={layoutComponent.apiName} value={layoutComponent._value}
+                                field-name={layoutComponent.apiName} required={layoutComponent._required}
+                                disabled={layoutItem._disabled} class={layoutComponent._computedClasses}
+                                onchange={handleInputFieldChange}>
                             </lightning-input-field>
                         </template>
                     </template>

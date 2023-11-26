@@ -1,8 +1,8 @@
 /**
- * @description       :
+ * @description       : Main component for the LWC Dynamic Record Edit Form component
  * @author            : samuel@pipelaunch.com
  * @group             : LWC Dynamic Record Edit Form
- * @last modified on  : 2023-11-25
+ * @last modified on  : 2023-11-26
  * @last modified by  : samuel@pipelaunch.com
  * Modifications Log
  * Ver   Date         Author                  Modification
@@ -26,17 +26,17 @@ import { processLayoutSections } from "./layoutUtils";
 import * as styles from "./lwcDynamicRecordEditFormStyles";
 export default class LwcDynamicRecordEditForm extends LightningElement {
   /**
-   * @property {boolean} debug - true to see debug messages in the console.
+   * @property {boolean} - true to see debug messages in the console.
    */
   @api debug = false;
 
   /**
-   * @property {string} objectApiName - The API name of the object.
+   * @property {string} - The API name of the object.
    */
   @api objectApiName;
 
   /**
-   * @property {string} density - Sets the arrangement style of fields and labels in the form.
+   * @property {string} - Sets the arrangement style of fields and labels in the form.
    * Accepted values are compact, comfy, and auto (default).
    * Use compact to display fields and their labels on the same line.
    * Use comfy to display fields below their labels.
@@ -47,64 +47,64 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   @api density = "auto";
 
   /**
-   * @property {string} formClass - A CSS class for the form element.
+   * @property {string} - A CSS class for the form element.
    */
   @api formClass = "";
 
   /**
-   * @property {string} recordTypeId - The ID of the record type, which is required if you created
+   * @property {string} - The ID of the record type, which is required if you created
    * multiple record types but don't have a default.
    * TODO: handle manual setting of record type
    */
   @api recordTypeId;
 
   /**
-   * @property {boolean} propagateEvents - Propagate events up with bubble and composed to use when the component is nested
+   * @property {boolean} - Propagate events up with bubble and composed to use when the component is nested
    */
   @api propagateEvents = false;
 
   /**
-   * @property {boolean} disableRecordTypeSupport - Disable the record type selection
+   * @property {boolean} - Disable the record type selection
    */
   @api disableRecordTypeSupport = false;
 
   /**
-   * @property {boolean} hideLoadingRecordForm - Hide the loading stencil for the record form
+   * @property {boolean} - Hide the loading stencil for the record form
    */
   @api hideLoadingRecordForm = false;
 
   /**
-   * @property {string[]} fieldsToIgnore - Array of then fields API name to ignore. E.g. manually added to the form on the slot
+   * @property {string[]} - Array of then fields API name to ignore. E.g. manually added to the form on the slot
    */
   @api fieldsToIgnore = [];
 
   /**
-   * @property {boolean} accordion - Show collapsible accordion
+   * @property {boolean} - Show collapsible accordion
    */
   @api accordion = false;
 
   /**
-   * @property {"modal"|"simple"} footerStyle - Style for the footer
+   * @property {"modal"|"simple"} - Style for the footer
    */
   @api footerStyle = "";
 
   /**
-   * @property {string} recordTypeFooterClasses - Custom classes for the footer on the record type selection view
+   * @property {string} - Custom classes for the footer on the record type selection view
    */
   @api recordTypeFooterClasses = "";
 
   /**
-   * @property {string} recordFormFooterClasses - Custom classes for the footer on the record edit form view
+   * @property {string} - Custom classes for the footer on the record edit form view
    */
   @api recordFormFooterClasses = "";
 
   /**
-   * @property {boolean} showFooter - Show the footer with native buttons
+   * @property {boolean} - Show the footer with native buttons
    */
   @api showFooter = false;
 
   /**
-   * @property {object} values - default values to be applied
+   * @property {object} - default values to be applied
    * format
    * {
    *    objectApiName: {
@@ -118,7 +118,11 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   @api values = null;
 
   /**
-   * @property {object} labels - An object with the labels for the component.
+   * @property {object} - An object with the labels for the component.
+   * @example
+   * {
+   *  CANCEL: "Cancel",
+   * }
    */
   @api get labels() {
     return this._labels;
@@ -159,7 +163,10 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
         throw new Error(response.error);
       }
     } catch (err) {
-      console.error("Unexpected error on getting object info", err);
+      console.error(
+        "[LwcDynamicRecordEditForm] Unexpected error on getting object info",
+        err
+      );
       this.status.loading = false;
     }
   }
@@ -169,7 +176,11 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   }
 
   errorCallback(error, stack) {
-    console.error("Unexpected major error", error, stack);
+    console.error(
+      "[LwcDynamicRecordEditForm] Unexpected major error",
+      error,
+      stack
+    );
   }
 
   render() {
@@ -291,6 +302,16 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
     this._dispatchEvent("load", evt.detail);
   }
 
+  handleInputFieldChange(evt) {
+    const elm = evt.target !== undefined ? evt.target : evt.currentTarget;
+    const payload = {
+      fieldName: elm.dataset?.fieldname,
+      value: evt.detail.value,
+    };
+
+    this._dispatchEvent("inputfieldchange", payload);
+  }
+
   handleSuccess(evt) {
     this.status.overlayLoading = false;
 
@@ -322,7 +343,7 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   handleSlotValueChange(evt) {
     evt.stopPropagation(); // stop the event from bubbling up (required)
     if (this.debug) {
-      console.info("Slot change event", evt.detail);
+      console.info("[LwcDynamicRecordEditForm] Slot change event", evt.detail);
     }
 
     this._setValues(evt.detail);
