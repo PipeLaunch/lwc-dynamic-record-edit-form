@@ -115,6 +115,10 @@
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>
+        <tab>Custom_Test_Object__c</tab>
+        <visibility>DefaultOff</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
         <tab>Samples</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>

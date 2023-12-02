@@ -13,8 +13,6 @@
     <label>Sample</label>
     <navType>Standard</navType>
     <tabs>Samples</tabs>
-    <tabs>standard-Account</tabs>
-    <tabs>standard-Contact</tabs>
-    <tabs>standard-Lead</tabs>
+    <tabs>Custom_Test_Object__c</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>
