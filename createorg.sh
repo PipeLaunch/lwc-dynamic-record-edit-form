@@ -24,20 +24,19 @@ ORG_DURATION_DAYS=30 # 1 to 30 days
 START_TIME=`date +%s`
 EXIT_CODE=0
 
-# read -p "Dev Hub alias [$DEVHUB_ALIAS]: " devhubaliasinput # old bash versions
 read -e -i "$DEVHUB_ALIAS" -p "Dev Hub alias: " devhubaliasinput # requires bash 4.0 or later
 DEVHUB_ALIAS=${devhubaliasinput:-$DEVHUB_ALIAS}
 echo "Authorizing the Dev Hub..."
-sfdx auth:web:login \
-    --setdefaultdevhubusername \
-    --setalias $DEVHUB_ALIAS
+sf org login web \
+    --set-default-dev-hub \
+    --alias $DEVHUB_ALIAS
 echo ""
 
 read -e -i "$ORG_ALIAS" -p "Scratch org alias: " aliasinput # requires bash 4.0 or later
 ORG_ALIAS=${aliasinput:-$ORG_ALIAS}
 
 echo "Cleaning previously created scratch org..."
-sfdx force:org:delete \
+sf force org delete \
     -p \
     -u $ORG_ALIAS &> /dev/null
 echo ""
@@ -46,19 +45,24 @@ read -e -i "$ORG_DURATION_DAYS" -p "Scratch org duration (days): " orgdurationin
 ORG_DURATION_DAYS=${orgdurationinput:-$ORG_DURATION_DAYS}
 
 echo "Creating scratch org..."
-sfdx force:org:create \
-    -s \
-    -f config/project-scratch-def.json \
-    --durationdays $ORG_DURATION_DAYS \
+sf org create scratch \
+    --definition-file config/project-scratch-def.json \
+    --duration-days $ORG_DURATION_DAYS \
     --wait 15 \
-    -a $ORG_ALIAS
+    --set-default \
+    --alias $ORG_ALIAS
+echo ""
+
+echo "Pushing source..."
+sf project deploy start \
+	--target-org $ORG_ALIAS
 echo ""
 
 read -e -i "Y" -p "Do you want to enable the Debug Mode? Debug mode can slow down your salesforce org [Y/n] " response
 response=${response,,}    # tolower
 if [[ "$response" =~ ^(yes|y)$ ]]
 then
-    APEX_OUTPUT=$(sfdx force:apex:execute -f "$INSTALL_SCRIPT_PATH")
+    APEX_OUTPUT=$(sf apex run -f "$INSTALL_SCRIPT_PATH")
 	EXIT_CODE="$?"
 	if [ "$EXIT_CODE" -eq 0 ]; then # Check Salesforce CLI exit code
 		APEX_ERRORS=$(echo "$APEX_OUTPUT" | grep 'Error: ') # Check for Apex runtime error https://gist.github.com/pozil/ce21a6dcfc939def4972f56ec9d35646
@@ -78,16 +82,11 @@ fi
 
 echo "Generating the scratch org password... View the password.env file"
 rm -rf password.env
-sfdx force:user:password:generate >> password.env
+sf force user password generate >> password.env
 cat password.env
 
 echo "Opening scratch org..."
-sfdx force:org:open
-echo ""
-
-echo "Pushing source..."
-sfdx force:source:push \
-	-u $ORG_ALIAS
+sf force org open
 echo ""
 
 # end message
