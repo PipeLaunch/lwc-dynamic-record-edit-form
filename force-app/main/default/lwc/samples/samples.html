@@ -64,7 +64,8 @@
             <lightning-card title="Default values with field not visible on the layout">
                 <div class="slds-var-p-horizontal_medium
                     slds-var-p-vertical_small">
-                    <c-lwc-dynamic-record-edit-form object-api-name="Custom_Test_Object__c" values={values}>
+                    <c-lwc-dynamic-record-edit-form object-api-name="Custom_Test_Object__c"
+                        fields-to-show={fieldsToShow} values={values} debug>
                     </c-lwc-dynamic-record-edit-form>
                 </div>
             </lightning-card>

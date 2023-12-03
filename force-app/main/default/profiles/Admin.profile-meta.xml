@@ -43,6 +43,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Custom_Test_Object__c.Field_Not_Visible_2__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Custom_Test_Object__c.Field_Not_Visible__c</field>
         <readable>true</readable>
     </fieldPermissions>

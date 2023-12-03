@@ -2,11 +2,12 @@
  * @description       : Main component for the LWC Dynamic Record Edit Form component
  * @author            : samuel@pipelaunch.com
  * @group             : LWC Dynamic Record Edit Form
- * @last modified on  : 2023-11-26
+ * @last modified on  : 2023-12-03
  * @last modified by  : samuel@pipelaunch.com
  * Modifications Log
  * Ver   Date         Author                  Modification
  * 1.0   2023-07-26   samuel@pipelaunch.com   Initial Version
+ * 1.1   2023-12-02   samuel@pipelaunch.com   Added fields to show
  **/
 import { LightningElement, api, track, wire } from "lwc";
 
@@ -34,6 +35,20 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
    * @property {string} - The API name of the object.
    */
   @api objectApiName;
+
+  /**
+   * @property {object} - default values to be applied
+   * format
+   * {
+   *    objectApiName: {
+   *      value: "default value",
+   *      hidden: true, // hide on the layout (css hidden class). Field is still present in the DOM and will be added to the form
+   *      required: true, // force to make it required
+   *      disabled: true, // force to make it disabled
+   *    }
+   * }
+   */
+  @api values = null;
 
   /**
    * @property {string} - Sets the arrangement style of fields and labels in the form.
@@ -79,6 +94,11 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
   @api fieldsToIgnore = [];
 
   /**
+   * @property {string[]} - Array of then fields API name to show/include even if they are not part of the visible layout
+   */
+  @api fieldsToShow = [];
+
+  /**
    * @property {boolean} - Show collapsible accordion
    */
   @api accordion = false;
@@ -102,20 +122,6 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
    * @property {boolean} - Show the footer with native buttons
    */
   @api showFooter = false;
-
-  /**
-   * @property {object} - default values to be applied
-   * format
-   * {
-   *    objectApiName: {
-   *      value: "default value",
-   *      hidden: true, // hide on the page (css hidden class)
-   *      required: true, // force to make it required
-   *      disabled: true, // force to make it disabled
-   *    }
-   * }
-   */
-  @api values = null;
 
   /**
    * @property {object} - An object with the labels for the component.
@@ -294,6 +300,7 @@ export default class LwcDynamicRecordEditForm extends LightningElement {
       recordInfo: evt.detail,
       fieldsProperties: this._fieldsProperties,
       fieldsToIgnore: this.fieldsToIgnore,
+      fieldsToShow: this.fieldsToShow,
       values: this.values,
       debug: this.debug,
     });

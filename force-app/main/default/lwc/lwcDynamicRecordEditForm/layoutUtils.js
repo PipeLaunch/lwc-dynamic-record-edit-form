@@ -8,6 +8,7 @@ export function processLayoutSections({
   recordInfo,
   fieldsProperties,
   fieldsToIgnore = [],
+  fieldsToShow = [],
   values = null,
   debug = false,
 }) {
@@ -45,10 +46,18 @@ export function processLayoutSections({
             component,
             fieldsProperties[component.apiName]
           );
-          overrideValues(component, values);
+          overrideValues(component, values); // override values with custom defined property
         });
       });
     });
+  });
+
+  addFieldsToShowToLayout({
+    layoutComponents: sections,
+    fieldsToShow,
+    fieldsProperties,
+    values,
+    debug,
   });
 
   // do not show empty sections (TODO: check also for hidden)
@@ -71,6 +80,146 @@ export function processLayoutSections({
   }
 
   return filteredSections;
+}
+
+function addFieldsToShowToLayout({
+  layoutComponents,
+  fieldsToShow = [],
+  fieldsProperties,
+  values = null,
+  debug = false,
+}) {
+  if (
+    !Array.isArray(fieldsToShow) ||
+    !fieldsToShow.length ||
+    !Array.isArray(layoutComponents) ||
+    !layoutComponents.length
+  ) {
+    return; // no need to check
+  }
+
+  const fieldsToAppend = fieldsToShow.filter(
+    (fieldToShow) =>
+      !checkIfFieldIsInLayout({
+        layoutComponents,
+        fieldToShow,
+        fieldsProperties,
+      })
+  );
+  if (debug) {
+    console.info("[LwcDynamicRecordEditForm] Fields to append", fieldsToAppend);
+  }
+
+  if (fieldsToAppend.length) {
+    layoutComponents.push({
+      id: guid(),
+      heading: "",
+      columns: 1,
+      layoutRows: [
+        {
+          layoutItems: computeFieldsToAppendLayoutItems(
+            fieldsToAppend,
+            fieldsProperties,
+            values
+          ),
+        },
+      ],
+    });
+  }
+}
+
+function computeFieldsToAppendLayoutItems(
+  fieldsToAppend,
+  fieldsProperties,
+  values
+) {
+  return fieldsToAppend.map((fieldToShow) => ({
+    _id: guid(),
+    _elementLabel: "",
+    _disabled: false,
+    layoutComponents: computeLayoutComponentsForFieldsToAppend(
+      fieldToShow,
+      fieldsProperties,
+      values
+    ),
+  }));
+}
+
+/**
+ * @description compute the layout components for the fields to append
+ * @param {string} apiName api name of the field to append
+ * @param {object[]} fieldProperties field properties from object info
+ * @param {object[]} values custom defined values to override the default ones
+ * @returns
+ */
+function computeLayoutComponentsForFieldsToAppend(
+  apiName,
+  fieldProperties,
+  values
+) {
+  const { value, disabled, hidden } = values[apiName] || {};
+
+  return [
+    {
+      apiName,
+      _value: value ?? undefined,
+      _required: computeRequiredPropertyForFieldToAppend(
+        apiName,
+        fieldProperties,
+        values
+      ),
+      _disabled: typeof disabled === "boolean" ? disabled : undefined,
+      _computedClasses: hidden === true ? "slds-hide" : undefined,
+    },
+  ];
+}
+
+function computeRequiredPropertyForFieldToAppend(
+  apiName,
+  fieldProperties,
+  values
+) {
+  if (values[apiName]?.required) {
+    return values[apiName].required;
+  }
+
+  if (!fieldProperties[apiName]) {
+    return false;
+  }
+
+  if (fieldProperties[apiName]?.dataType?.toLowerCase() === "boolean") {
+    return false; // Boolean / checkbox fields return always as required from the getObjectInfos API
+  }
+
+  return fieldProperties[apiName]?.required ?? false;
+}
+
+function checkIfFieldIsInLayout({
+  layoutComponents,
+  fieldToShow,
+  fieldsProperties,
+}) {
+  const normalizedField = fieldToShow?.trim()?.toLowerCase();
+  if (!normalizedField) {
+    return true; // no need to check invalid field
+  }
+  if (!fieldsProperties[fieldToShow]) {
+    console.warn(
+      "[LwcDynamicRecordEditForm] Field not found in the objectInfo",
+      fieldToShow
+    );
+    return true; // field not found in object info (maybe it's deleted/no access)
+  }
+
+  return layoutComponents.some(({ layoutRows }) =>
+    layoutRows.some(({ layoutItems }) =>
+      layoutItems.some(({ layoutComponents }) =>
+        layoutComponents.some(
+          ({ apiName }) => apiName && apiName?.toLowerCase() === normalizedField
+        )
+      )
+    )
+  );
 }
 
 /**
@@ -101,10 +250,10 @@ function overrideValues(component, values) {
     component._value = value.value;
   }
   if (value.hasOwnProperty("required") && typeof value.required === "boolean") {
-    component._required = true;
+    component._required = value.required;
   }
   if (value.hasOwnProperty("disabled") && typeof value.disabled === "boolean") {
-    component._disabled = true;
+    component._disabled = value.disabled;
   }
   if (value.hasOwnProperty("hidden") && typeof value.hidden === "boolean") {
     component._computedClasses = "slds-hide";

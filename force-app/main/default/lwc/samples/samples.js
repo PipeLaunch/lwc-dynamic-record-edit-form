@@ -2,7 +2,7 @@
  * @description       : Sample usage of the custom component
  * @group             : Generic Components
  * @author            : samuel@pipelaunch.com
- * @last modified on  : 2023-12-02
+ * @last modified on  : 2023-12-03
  * @last modified by  : samuel@pipelaunch.com
  **/
 import { LightningElement } from "lwc";
@@ -23,7 +23,11 @@ export default class Samples extends LightningElement {
       hidden: true,
     },
     Field_Not_Visible__c: {
-      value: "test",
+      value: "this field is not visible in the layout",
+    },
+    Field_Not_Visible_2__c: {
+      value: 5,
+      hidden: true,
     },
   };
 
@@ -34,6 +38,12 @@ export default class Samples extends LightningElement {
   };
 
   fieldsToIgnore = ["Value__c", "OwnerId", "Name"];
+
+  fieldsToShow = [
+    "Field_Not_Visible__c",
+    "Field_Not_Visible_2__c",
+    "INVALID_FIELD__c",
+  ];
 
   async handleClickButtonShowModal() {
     await samplesModal.open({
